@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Ledger — Accounting &amp; Code</title>
+<style>
+  :root{
+    --bg:#10151c;
+    --surface:#182029;
+    --surface-2:#1e2833;
+    --line:#2a3542;
+    --paper:#e8e6de;
+    --paper-dim:#a9b0ba;
+    --gold:#c9a227;
+    --gold-dim:#8a7222;
+    --mint:#5fd4a0;
+    --mint-dim:#3f8f6d;
+    --rust:#e0725a;
+    --rust-dim:#9c4d3c;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--paper);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    line-height:1.5;
+    padding-bottom:4rem;
+  }
+  header{
+    max-width:760px;
+    margin:0 auto;
+    padding:3rem 1.5rem 2rem;
+    border-bottom:1px solid var(--line);
+  }
+  header h1{
+    font-size:2rem;
+    margin:0 0 .35rem;
+    font-weight:600;
+    letter-spacing:.01em;
+  }
+  header p{
+    color:var(--paper-dim);
+    margin:0;
+    max-width:60ch;
+    font-size:1rem;
+  }
+  .rules{
+    max-width:760px;
+    margin:1.25rem auto 0;
+    padding:0 1.5rem;
+    display:flex;
+    gap:1.5rem;
+    font-family:"Courier New",monospace;
+    font-size:.85rem;
+    color:var(--paper-dim);
+  }
+  .rules span b{color:var(--paper);font-weight:600;}
+  .rules .acc-dot{color:var(--gold);}
+  .rules .fcc-dot{color:var(--mint);}
+
+  .balance{
+    max-width:760px;
+    margin:2rem auto 0;
+    padding:0 1.5rem;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .balance > div{
+    background:var(--surface);
+    padding:1rem 1.25rem;
+  }
+  .balance .num{
+    font-family:"Courier New",monospace;
+    font-size:1.7rem;
+    color:var(--gold);
+  }
+  .balance .lbl{
+    font-size:.78rem;
+    color:var(--paper-dim);
+    margin-top:.15rem;
+  }
+
+  main{max-width:760px;margin:0 auto;padding:0 1.5rem;}
+
+  .month-head{
+    font-family:"Courier New",monospace;
+    font-size:.8rem;
+    letter-spacing:.08em;
+    color:var(--paper-dim);
+    margin:2.5rem 0 .5rem;
+    padding-bottom:.4rem;
+    border-bottom:1px solid var(--line);
+  }
+
+  .row{
+    display:grid;
+    grid-template-columns:5.5rem 1fr 1fr;
+    align-items:start;
+    gap:.75rem;
+    padding:.85rem 0;
+    border-bottom:1px solid var(--line);
+  }
+  .row.today{background:var(--surface);margin:0 -1.5rem;padding:.85rem 1.5rem;border-radius:2px;}
+  .date-col{
+    font-family:"Courier New",monospace;
+    font-size:.85rem;
+    color:var(--paper-dim);
+    padding-top:.15rem;
+  }
+  .date-col .dow{display:block;font-size:.72rem;color:var(--paper-dim);opacity:.7;}
+  .row.today .date-col{color:var(--gold);}
+
+  .item{font-size:.95rem;}
+  .item label{
+    display:flex;
+    align-items:flex-start;
+    gap:.55rem;
+    cursor:pointer;
+  }
+  .item input[type=checkbox]{
+    appearance:none;
+    width:1.05rem;height:1.05rem;
+    border:1.5px solid var(--paper-dim);
+    border-radius:2px;
+    margin-top:.15rem;
+    flex:none;
+    cursor:pointer;
+    position:relative;
+  }
+  .item.acc input[type=checkbox]:checked{background:var(--gold);border-color:var(--gold);}
+  .item.fcc input[type=checkbox]:checked{background:var(--mint);border-color:var(--mint);}
+  .item input[type=checkbox]:checked::after{
+    content:"";
+    position:absolute;left:3px;top:-1px;
+    width:5px;height:9px;
+    border:solid var(--bg);
+    border-width:0 2px 2px 0;
+    transform:rotate(40deg);
+  }
+  .item .txt{color:var(--paper);}
+  .item .hrs{color:var(--paper-dim);font-size:.82rem;}
+
+  .note-toggle{
+    display:inline-block;
+    margin-top:.35rem;
+    margin-left:1.6rem;
+    font-family:"Courier New",monospace;
+    font-size:.72rem;
+    color:var(--rust);
+    background:none;
+    border:none;
+    border-bottom:1px dotted var(--rust-dim);
+    cursor:pointer;
+    padding:0;
+  }
+  .note-toggle:hover{color:var(--paper);}
+
+  .note-box{
+    margin:.5rem 0 0 1.6rem;
+    display:none;
+  }
+  .note-box.open{display:block;}
+  .note-box textarea{
+    width:100%;
+    min-height:3.2rem;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:3px;
+    color:var(--paper);
+    font-family:inherit;
+    font-size:.85rem;
+    padding:.5rem .6rem;
+    resize:vertical;
+  }
+  .note-box textarea:focus{outline:1px solid var(--rust-dim);}
+  .tip{
+    margin-top:.4rem;
+    padding:.55rem .7rem;
+    background:rgba(224,114,90,.08);
+    border-left:2px solid var(--rust);
+    font-size:.82rem;
+    color:var(--paper);
+    display:none;
+  }
+  .tip.show{display:block;}
+  .tip b{color:var(--rust);font-weight:600;}
+
+  footer{
+    max-width:760px;
+    margin:2.5rem auto 0;
+    padding:1.25rem 1.5rem 0;
+    border-top:1px solid var(--line);
+    font-size:.78rem;
+    color:var(--paper-dim);
+  }
+  footer button{
+    background:none;
+    border:1px solid var(--line);
+    color:var(--paper-dim);
+    padding:.4rem .7rem;
+    border-radius:3px;
+    font-family:inherit;
+    font-size:.78rem;
+    cursor:pointer;
+  }
+  footer button:hover{color:var(--paper);border-color:var(--paper-dim);}
+
+  @media (max-width:520px){
+    .row{grid-template-columns:1fr;gap:.4rem;}
+    .date-col{padding-top:0;}
+    .balance{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Study Ledger</h1>
+  <p>Accounting at University of Fort Hare, and freeCodeCamp — one line per day, from today through the end of next month. Tick what you finish. If you miss a line, there's a note field underneath it — write why, and the ledger tells you how to make the shortfall up.</p>
+</header>
+
+<div class="rules">
+  <span><b class="acc-dot">●</b> Accounting — <b>4h</b> minimum/day</span>
+  <span><b class="fcc-dot">●</b> freeCodeCamp — <b>2h</b> minimum/day</span>
+</div>
+
+<div class="balance">
+  <div><div class="num" id="pctDone">0%</div><div class="lbl">days fully closed</div></div>
+  <div><div class="num" id="hrsAcc">0h</div><div class="lbl">accounting hours logged</div></div>
+  <div><div class="num" id="hrsFcc">0h</div><div class="lbl">freeCodeCamp hours logged</div></div>
+</div>
+
+<main id="ledger"></main>
+
+<footer>
+  <span>Progress saves in this browser automatically.</span>
+  <button id="resetBtn" type="button">Clear all entries</button>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var START = new Date(2026, 8, 19);   // 19 Sep 2026 — today
+  var END   = new Date(2026, 9, 31);   // 31 Oct 2026 — end of following month
+
+  var STORE_KEY = "study-ledger-v1";
+  var DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  var MON = ["January","February","March","April","May","June","July","August",
+             "September","October","November","December"];
+
+  function loadState(){
+    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
+    catch(e){ return {}; }
+  }
+  function saveState(state){
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+    catch(e){ /* storage unavailable — entries won't persist this session */ }
+  }
+
+  var state = loadState();
+  function dayKey(d){ return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+  function entry(key){
+    if(!state[key]) state[key] = { acc:false, fcc:false, accNote:"", fccNote:"" };
+    return state[key];
+  }
+
+  // ---- auto-fix tips, keyed to what's actually written in the note ----
+  function tipFor(text){
+    var t = text.toLowerCase();
+    var rules = [
+      { k:["sleep","tired","exhaust"], msg:"Move this session earlier in the day, before energy drops, and shorten tomorrow's block into two 1-hour sittings instead of one long one." },
+      { k:["sick","ill","fever","unwell"], msg:"Rest today. Split tomorrow's hours in half and add the missed half to the day after, so no single day carries a double load." },
+      { k:["assignment","exam","test","deadline","due"], msg:"Block tomorrow's calendar for this subject first, before anything else gets scheduled into that slot." },
+      { k:["work","job","shift","overtime"], msg:"Shift this subject's slot to a fixed early-morning or late-evening hour that work doesn't touch, and keep it there daily." },
+      { k:["no wifi","wifi","data","internet","load","loadshedding","electric"], msg:"Download offline material in advance (freeCodeCamp curriculum PDFs, saved accounting notes) so connectivity doesn't block the session again." },
+      { k:["lazy","unmotivated","procrastin","didn't feel","forgot"], msg:"Set a fixed daily alarm for this slot and do just the first 10 minutes — most sessions continue once started." },
+      { k:["transport","travel","commute","taxi"], msg:"Keep a short offline task (flashcards, one freeCodeCamp challenge) ready for travel time, so the commute covers part of the hours." },
+      { k:["family","event","emergency"], msg:"That's a fair one-off. Add the missed hours to this weekend so the week's total still balances." }
+    ];
+    for(var i=0;i<rules.length;i++){
+      for(var j=0;j<rules[i].k.length;j++){
+        if(t.indexOf(rules[i].k[j]) !== -1) return rules[i].msg;
+      }
+    }
+    return "Add these missed hours onto tomorrow's session so the week's total still reaches the minimum.";
+  }
+
+  function render(){
+    var ledger = document.getElementById("ledger");
+    ledger.innerHTML = "";
+    var cur = new Date(START);
+    var lastMonth = null;
+    var todayKey = dayKey(new Date());
+
+    while(cur <= END){
+      var key = dayKey(cur);
+      var mLabel = MON[cur.getMonth()] + " " + cur.getFullYear();
+      if(mLabel !== lastMonth){
+        var mh = document.createElement("div");
+        mh.className = "month-head";
+        mh.textContent = mLabel.toUpperCase();
+        ledger.appendChild(mh);
+        lastMonth = mLabel;
+      }
+
+      var e = entry(key);
+      var row = document.createElement("div");
+      row.className = "row" + (key === todayKey ? " today" : "");
+
+      var dcol = document.createElement("div");
+      dcol.className = "date-col";
+      dcol.innerHTML = "<span class='dow'>"+DOW[cur.getDay()]+"</span>"+cur.getDate();
+      row.appendChild(dcol);
+
+      row.appendChild(buildItem("acc", key, e, "Accounting", "4h"));
+      row.appendChild(buildItem("fcc", key, e, "freeCodeCamp", "2h"));
+
+      ledger.appendChild(row);
+      cur.setDate(cur.getDate()+1);
+    }
+    updateBalance();
+  }
+
+  function buildItem(kind, key, e, label, hrs){
+    var wrap = document.createElement("div");
+    wrap.className = "item " + kind;
+
+    var lab = document.createElement("label");
+    var box = document.createElement("input");
+    box.type = "checkbox";
+    box.checked = e[kind];
+
+    var txt = document.createElement("span");
+    txt.className = "txt";
+    txt.textContent = label + " ";
+    var hspan = document.createElement("span");
+    hspan.className = "hrs";
+    hspan.textContent = "("+hrs+")";
+    txt.appendChild(hspan);
+
+    lab.appendChild(box);
+    lab.appendChild(txt);
+    wrap.appendChild(lab);
+
+    var noteKey = kind + "Note";
+    var toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "note-toggle";
+    toggle.textContent = e[noteKey] ? "edit note" : "didn't do it? add a reason";
+    wrap.appendChild(toggle);
+
+    var noteBox = document.createElement("div");
+    noteBox.className = "note-box" + (e[noteKey] ? " open" : "");
+    var ta = document.createElement("textarea");
+    ta.placeholder = "Why didn't this happen today?";
+    ta.value = e[noteKey] || "";
+    var tip = document.createElement("div");
+    tip.className = "tip" + (e[noteKey] ? " show" : "");
+    if(e[noteKey]) tip.innerHTML = "<b>Fix: </b>" + tipFor(e[noteKey]);
+
+    noteBox.appendChild(ta);
+    noteBox.appendChild(tip);
+    wrap.appendChild(noteBox);
+
+    toggle.addEventListener("click", function(){
+      noteBox.classList.toggle("open");
+    });
+
+    ta.addEventListener("input", function(){
+      e[noteKey] = ta.value;
+      if(ta.value.trim()){
+        tip.innerHTML = "<b>Fix: </b>" + tipFor(ta.value);
+        tip.classList.add("show");
+      } else {
+        tip.classList.remove("show");
+      }
+      saveState(state);
+    });
+
+    box.addEventListener("change", function(){
+      e[kind] = box.checked;
+      if(box.checked){
+        noteBox.classList.remove("open");
+      }
+      saveState(state);
+      updateBalance();
+    });
+
+    return wrap;
+  }
+
+  function updateBalance(){
+    var days = 0, closed = 0, accH = 0, fccH = 0;
+    for(var k in state){
+      days++;
+      if(state[k].acc){ accH += 4; }
+      if(state[k].fcc){ fccH += 2; }
+      if(state[k].acc && state[k].fcc){ closed++; }
+    }
+    var totalDays = Math.round((END - START)/86400000) + 1;
+    var pct = totalDays ? Math.round((closed/totalDays)*100) : 0;
+    document.getElementById("pctDone").textContent = pct + "%";
+    document.getElementById("hrsAcc").textContent = accH + "h";
+    document.getElementById("hrsFcc").textContent = fccH + "h";
+  }
+
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    if(confirm("Clear every tick and note? This can't be undone.")){
+      state = {};
+      saveState(state);
+      render();
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
