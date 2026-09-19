@@ -28,6 +28,19 @@
     font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
     line-height:1.5;
     padding-bottom:4rem;
+    position:relative;
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(16,21,28,.85), rgba(16,21,28,.85)),
+      url("background.png");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    z-index:-1;
   }
   header{
     max-width:760px;
