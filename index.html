@@ -3,340 +3,305 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#10151c">
-<title>Study Tracker — Accounting &amp; freeCodeCamp</title>
+<meta name="theme-color" content="#0a0b0d">
+<title>Study Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#10151c;
-    --surface:#182029;
-    --surface-2:#1e2833;
-    --line:#2a3542;
-    --paper:#e8e6de;
-    --paper-dim:#a9b0ba;
-    --gold:#c9a227;
-    --mint:#5fd4a0;
-    --rust:#e0725a;
+    --bg:#0a0b0d;
+    --panel:#111318;
+    --hair:rgba(255,255,255,.07);
+    --hair-strong:rgba(255,255,255,.13);
+    --cream:#f2ede2;
+    --dim:#8b8d93;
+    --gold:#cba135;
+    --gold-soft:#e4c66b;
+    --emerald:#3fae82;
     --amber:#d9a441;
-    font-size:16px;
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
-    background:var(--bg);
-    color:var(--paper);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-    line-height:1.5;
-    padding-bottom:3rem;
-    position:relative;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at top, rgba(203,161,53,.06), transparent 55%),
+      linear-gradient(rgba(10,11,13,.93),rgba(10,11,13,.93)),
+      url("background.png") center/cover fixed no-repeat,
+      var(--bg);
+    color:var(--cream);
+    font-family:"Inter",-apple-system,sans-serif;
   }
-  body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    background-image:
-      linear-gradient(rgba(16,21,28,.88), rgba(16,21,28,.88)),
-      url("background.png");
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-    z-index:-1;
-  }
-  .wrap{max-width:640px;margin:0 auto;padding:0 1.25rem;}
+  .page{max-width:660px;margin:0 auto;padding:4rem 1.5rem 5rem;}
 
-  header{padding:2.5rem 1.25rem 1rem;max-width:640px;margin:0 auto;}
-  header h1{font-size:1.6rem;margin:0 0 .4rem;}
-  header p{color:var(--paper-dim);margin:0;font-size:.95rem;}
+  /* ---------- header ---------- */
+  .brand{text-align:left;margin-bottom:2.75rem;}
+  .brand h1{
+    font-family:"Playfair Display",Georgia,serif;
+    font-weight:700;
+    font-size:2.6rem;
+    letter-spacing:.01em;
+    margin:0 0 .6rem;
+    color:var(--cream);
+  }
+  .brand h1 em{font-style:italic;color:var(--gold-soft);font-weight:500;}
+  .hairline{height:1px;background:linear-gradient(90deg,var(--gold),transparent 65%);margin-bottom:.9rem;}
+  .brand .kicker{
+    font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  }
+  .brand .kicker b{color:var(--dim);font-weight:600;}
+  .brand .kicker .acc-mark{color:var(--gold-soft);}
+  .brand .kicker .fcc-mark{color:var(--emerald);}
 
-  /* ---- two clear target cards ---- */
-  .targets{
-    max-width:640px;margin:1.25rem auto 0;padding:0 1.25rem;
-    display:grid;grid-template-columns:1fr 1fr;gap:.75rem;
+  .focus-line{margin-top:1rem;font-size:.85rem;color:var(--dim);display:flex;align-items:center;gap:.5rem;}
+  .focus-line input{
+    background:none;border:none;border-bottom:1px solid var(--hair-strong);color:var(--cream);
+    font-family:"Inter";font-size:.85rem;padding:.15rem .1rem;flex:1;min-width:10rem;
   }
-  .target-card{
-    background:var(--surface);border:1px solid var(--line);border-radius:8px;
-    padding:.9rem 1rem;
-  }
-  .target-card .label{font-size:.8rem;color:var(--paper-dim);margin-bottom:.25rem;}
-  .target-card .value{font-size:1.4rem;font-weight:600;}
-  .target-card.acc .value{color:var(--gold);}
-  .target-card.fcc .value{color:var(--mint);}
+  .focus-line input:focus{outline:none;border-bottom-color:var(--emerald);}
 
-  .fcc-name-row{
-    max-width:640px;margin:.75rem auto 0;padding:0 1.25rem;
-    font-size:.85rem;color:var(--paper-dim);display:flex;align-items:center;gap:.5rem;
-  }
-  .fcc-name-row input{
-    flex:1;background:var(--surface-2);border:1px solid var(--line);color:var(--paper);
-    border-radius:5px;padding:.4rem .6rem;font-size:.85rem;
-  }
-
-  /* ---- timer ---- */
-  .timer-box{
-    max-width:640px;margin:1.5rem auto 0;padding:1.1rem 1.25rem;
-    background:var(--surface);border:1px solid var(--line);border-radius:8px;
-  }
-  .timer-box h2{font-size:1rem;margin:0 0 .75rem;}
-  .timer-controls-row{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;}
-  .timer-controls-row select,
-  .timer-controls-row input[type=number]{
-    background:var(--surface-2);border:1px solid var(--line);color:var(--paper);
-    border-radius:5px;padding:.45rem .6rem;font-size:.9rem;
-  }
-  .timer-controls-row input[type=number]{width:4.5rem;}
-  .timer-display{font-size:1.8rem;font-weight:700;color:var(--gold);min-width:4.5rem;text-align:center;}
-  .btn{
-    border:none;border-radius:5px;padding:.5rem .9rem;font-size:.85rem;cursor:pointer;font-weight:600;
-  }
-  .btn-primary{background:var(--gold);color:var(--bg);}
-  .btn-primary:hover{background:#ddb23a;}
-  .btn-secondary{background:var(--surface-2);color:var(--paper);border:1px solid var(--line);}
-  .btn-secondary:hover{border-color:var(--paper-dim);}
-  .btn:disabled{opacity:.35;cursor:not-allowed;}
-  .timer-note{font-size:.78rem;color:var(--paper-dim);margin-top:.6rem;}
-
-  /* ---- hero: streak + weekly bar + vibe line ---- */
+  /* ---------- hero stats ---------- */
   .hero{
-    max-width:640px;margin:1.5rem auto 0;padding:1.25rem 1.25rem 1.4rem;
-    background:linear-gradient(160deg,var(--surface),var(--surface-2));
-    border:1px solid var(--line);border-radius:10px;
+    display:grid;grid-template-columns:1fr 1fr;
+    border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);
+    margin:2.5rem 0 2rem;
   }
-  .hero-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;}
-  .streak-block{display:flex;align-items:baseline;gap:.4rem;}
-  .streak-flame{font-size:1.6rem;line-height:1;}
-  .streak-num{font-size:2.1rem;font-weight:800;color:var(--gold);}
-  .streak-lbl{font-size:.78rem;color:var(--paper-dim);}
-  .mini-stats{display:flex;gap:1.1rem;font-size:.8rem;color:var(--paper-dim);}
-  .mini-stats b{color:var(--paper);}
+  .hero-cell{padding:1.4rem 1.6rem;}
+  .hero-cell + .hero-cell{border-left:1px solid var(--hair);}
+  .hero-cell .k{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:.5rem;}
+  .hero-cell .v{font-family:"Playfair Display",serif;font-size:2.1rem;font-weight:700;color:var(--gold-soft);}
+  .hero-cell .v small{font-family:"Inter";font-size:1rem;font-weight:500;color:var(--dim);}
 
-  .week-block{margin-top:1rem;}
-  .week-block .week-labels{display:flex;justify-content:space-between;font-size:.78rem;color:var(--paper-dim);margin-bottom:.35rem;}
-  .week-bar-track{height:10px;background:var(--line);border-radius:6px;overflow:hidden;}
-  .week-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--mint));width:0%;transition:width .35s ease;}
+  .week-bar-track{height:2px;background:var(--hair-strong);margin-top:1.5rem;}
+  .week-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--emerald));width:0%;transition:width .4s ease;}
+  .week-caption{font-size:.75rem;color:var(--dim);margin-top:.6rem;display:flex;justify-content:space-between;}
 
-  .vibe-line{
-    margin-top:1rem;font-size:.92rem;font-weight:600;color:var(--paper);
-    padding-top:.9rem;border-top:1px solid var(--line);
-  }
-  .motivation-line{color:var(--paper-dim);font-size:.85rem;margin-top:.25rem;font-style:italic;}
-
-  .celebrate{animation:pulseGlow 1.1s ease;}
-  @keyframes pulseGlow{
-    0%{box-shadow:0 0 0 0 rgba(95,212,160,.55);}
-    60%{box-shadow:0 0 0 12px rgba(95,212,160,0);}
-    100%{box-shadow:0 0 0 0 rgba(95,212,160,0);}
+  .motivation{
+    font-family:"Playfair Display",serif;font-style:italic;font-size:1rem;color:var(--dim);
+    text-align:center;margin:2.25rem auto;max-width:32rem;line-height:1.55;
   }
 
-  /* ---- day list ---- */
-  main{max-width:640px;margin:2rem auto 0;padding:0 1.25rem;}
+  /* ---------- timer ---------- */
+  .timer-panel{
+    border:1px solid var(--hair-strong);border-radius:2px;padding:1.6rem 1.75rem;margin-bottom:2.5rem;
+    background:linear-gradient(160deg, rgba(203,161,53,.035), transparent 60%);
+  }
+  .timer-panel .k{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:1.1rem;}
+  .timer-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+  .timer-left{display:flex;align-items:center;gap:.6rem;font-size:.85rem;}
+  select{
+    background:var(--panel);border:1px solid var(--hair-strong);color:var(--cream);
+    font-family:"Inter";font-size:.85rem;padding:.4rem .6rem;border-radius:2px;
+  }
+  input[type=number]{
+    background:var(--panel);border:1px solid var(--hair-strong);color:var(--cream);
+    font-family:"JetBrains Mono";font-size:.85rem;padding:.4rem .5rem;border-radius:2px;width:3.6rem;text-align:center;
+  }
+  .timer-display{
+    font-family:"JetBrains Mono";font-size:2.3rem;font-weight:600;color:var(--gold-soft);
+    letter-spacing:.02em;min-width:6.8rem;text-align:center;
+  }
+  .timer-controls{display:flex;gap:.5rem;}
+  button{font-family:"Inter";cursor:pointer;}
+  .btn-gold{
+    background:var(--gold);color:#181008;border:none;border-radius:2px;
+    padding:.55rem 1.1rem;font-size:.78rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  }
+  .btn-gold:hover{background:var(--gold-soft);}
+  .btn-gold:disabled{opacity:.3;cursor:not-allowed;background:var(--gold);}
+  .btn-outline{
+    background:none;border:1px solid var(--hair-strong);color:var(--dim);border-radius:2px;
+    padding:.55rem 1rem;font-size:.78rem;letter-spacing:.03em;
+  }
+  .btn-outline:hover{color:var(--cream);border-color:var(--dim);}
+  .btn-outline:disabled{opacity:.3;cursor:not-allowed;}
+  .timer-hint{font-size:.75rem;color:var(--dim);margin-top:1rem;}
+
+  /* ---------- ledger ---------- */
+  .ledger-head{
+    display:grid;grid-template-columns:4.5rem 1fr 1fr 3rem;gap:.75rem;
+    font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);
+    padding-bottom:.6rem;border-bottom:1px solid var(--hair-strong);margin-bottom:.25rem;
+  }
+  .ledger-head .acc-h{color:var(--gold-soft);}
+  .ledger-head .fcc-h{color:var(--emerald);}
   .month-head{
-    font-size:.85rem;letter-spacing:.05em;color:var(--paper-dim);text-transform:uppercase;
-    margin:2rem 0 .75rem;padding-bottom:.4rem;border-bottom:1px solid var(--line);
+    font-family:"Playfair Display",serif;font-style:italic;color:var(--dim);
+    font-size:.95rem;margin:2.2rem 0 .5rem;
   }
-  .day-card{
-    background:var(--surface);border:1px solid var(--line);border-radius:8px;
-    padding:.9rem 1rem;margin-bottom:.75rem;
+  .day-row{
+    display:grid;grid-template-columns:4.5rem 1fr 1fr 3rem;align-items:center;gap:.75rem;
+    padding:.7rem 0;border-bottom:1px solid var(--hair);
   }
-  .day-card.today{border-color:var(--gold);}
-  .day-title{font-size:.85rem;color:var(--paper-dim);margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem;}
-  .day-title .today-tag{background:var(--gold);color:var(--bg);font-size:.68rem;font-weight:700;padding:.1rem .4rem;border-radius:3px;}
+  .day-row.today{border-left:2px solid var(--gold);padding-left:.6rem;margin-left:-.6rem;background:rgba(203,161,53,.03);}
+  .date-cell{font-family:"JetBrains Mono";font-size:.8rem;color:var(--dim);}
+  .day-row.today .date-cell{color:var(--gold-soft);}
+  .hour-cell{display:flex;align-items:baseline;gap:.35rem;}
+  .hour-cell input{
+    background:none;border:none;border-bottom:1px solid var(--hair-strong);
+    font-family:"JetBrains Mono";font-size:.92rem;color:var(--cream);width:3rem;padding:.15rem .1rem;text-align:left;
+  }
+  .hour-cell input:focus{outline:none;border-bottom-color:var(--gold);}
+  .hour-cell .u{font-size:.72rem;color:var(--dim);}
+  .hour-cell.acc.met input{color:var(--gold-soft);border-bottom-color:var(--gold);}
+  .hour-cell.fcc.met input{color:var(--emerald);border-bottom-color:var(--emerald);}
+  .hour-cell.partial input{color:var(--amber);}
+  .note-btn{
+    background:none;border:none;color:var(--dim);font-size:.72rem;letter-spacing:.03em;
+    text-decoration:underline;text-underline-offset:2px;padding:0;
+  }
+  .note-btn.active{color:#d98a6c;}
 
-  .subject-row{
-    display:flex;align-items:center;justify-content:space-between;gap:.75rem;
-    padding:.55rem 0;border-top:1px solid var(--line);
+  .note-panel{display:none;grid-column:1/-1;margin:.2rem 0 .9rem;padding:.8rem 1rem;background:rgba(217,138,108,.06);border-left:2px solid #d98a6c;}
+  .note-panel.open{display:block;}
+  .note-panel textarea{
+    width:100%;min-height:2.4rem;background:var(--panel);border:1px solid var(--hair-strong);color:var(--cream);
+    font-family:"Inter";font-size:.85rem;padding:.5rem .6rem;border-radius:2px;resize:vertical;
   }
-  .subject-row:first-of-type{border-top:none;}
-  .subject-left{display:flex;align-items:center;gap:.55rem;}
-  .status-dot{width:.7rem;height:.7rem;border-radius:50%;background:var(--line);flex:none;}
-  .status-dot.met{background:var(--mint);}
-  .status-dot.partial{background:var(--amber);}
-  .subject-name{font-size:.92rem;}
-  .subject-target{font-size:.72rem;color:var(--paper-dim);}
-  .subject-right{display:flex;align-items:center;gap:.4rem;}
-  .subject-right input[type=number]{
-    width:3.6rem;background:var(--surface-2);border:1px solid var(--line);color:var(--paper);
-    border-radius:5px;padding:.35rem .4rem;font-size:.9rem;text-align:center;
-  }
-  .subject-right .hlabel{font-size:.78rem;color:var(--paper-dim);}
-
-  .reason-toggle{
-    display:block;margin-top:.35rem;background:none;border:none;color:var(--rust);
-    font-size:.75rem;text-decoration:underline;cursor:pointer;padding:0;
-  }
-  .reason-box{display:none;margin-top:.5rem;}
-  .reason-box.open{display:block;}
-  .reason-box textarea{
-    width:100%;min-height:2.6rem;background:var(--surface-2);border:1px solid var(--line);
-    color:var(--paper);border-radius:5px;padding:.5rem .6rem;font-size:.85rem;resize:vertical;
-  }
-  .reason-tip{
-    margin-top:.4rem;padding:.5rem .65rem;background:rgba(224,114,90,.09);
-    border-left:2px solid var(--rust);font-size:.8rem;display:none;
-  }
-  .reason-tip.show{display:block;}
-  .reason-tip b{color:var(--rust);}
+  .note-panel textarea:focus{outline:none;border-color:#d98a6c;}
+  .note-panel .fix{display:none;margin-top:.5rem;font-size:.82rem;font-style:italic;font-family:"Playfair Display",serif;color:var(--cream);}
+  .note-panel .fix.show{display:block;}
+  .note-panel .fix b{font-family:"Inter";font-style:normal;color:#d98a6c;font-weight:600;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;}
 
   footer{
-    max-width:640px;margin:2rem auto 0;padding:1.25rem;border-top:1px solid var(--line);
-    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.6rem;
-    font-size:.8rem;color:var(--paper-dim);
+    margin-top:3rem;padding-top:1.25rem;border-top:1px solid var(--hair);
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem;
+    font-size:.75rem;color:var(--dim);
   }
-  footer button{background:none;border:1px solid var(--line);color:var(--paper-dim);
-    padding:.4rem .7rem;border-radius:5px;font-size:.78rem;cursor:pointer;}
-  footer button:hover{color:var(--paper);border-color:var(--paper-dim);}
+  footer button{background:none;border:none;color:var(--dim);text-decoration:underline;text-underline-offset:2px;font-size:.75rem;padding:0;}
+  footer button:hover{color:var(--cream);}
 
   @media (max-width:480px){
-    .targets{grid-template-columns:1fr;}
-    .subject-row{flex-wrap:wrap;}
+    .hero{grid-template-columns:1fr;}
+    .hero-cell + .hero-cell{border-left:none;border-top:1px solid var(--hair);}
+    .ledger-head,.day-row{grid-template-columns:3.5rem 1fr 1fr 2.2rem;font-size:.78rem;}
   }
 </style>
 </head>
 <body>
+<div class="page">
 
-<header>
-  <h1>Study Tracker</h1>
-  <p>Two things to log every day: Accounting hours and freeCodeCamp hours. Fill in the number, that's it.</p>
-</header>
-
-<div class="targets">
-  <div class="target-card acc">
-    <div class="label">Accounting — daily minimum</div>
-    <div class="value">4 hours</div>
-  </div>
-  <div class="target-card fcc">
-    <div class="label">freeCodeCamp — daily minimum</div>
-    <div class="value">2 hours</div>
-  </div>
-</div>
-
-<div class="fcc-name-row">
-  <span>Currently working on (freeCodeCamp):</span>
-  <input type="text" id="fccName" placeholder="e.g. JavaScript Algorithms">
-</div>
-
-<div class="timer-box">
-  <h2>Timer</h2>
-  <div class="timer-controls-row">
-    <select id="timerSubject">
-      <option value="acc">Accounting</option>
-      <option value="fcc">freeCodeCamp</option>
-    </select>
-    <input type="number" id="timerMinutes" min="1" max="240" value="25"> min
-    <span class="timer-display" id="timerDisplay">25:00</span>
-    <button class="btn btn-primary" id="timerStart">Start</button>
-    <button class="btn btn-secondary" id="timerPause" disabled>Pause</button>
-    <button class="btn btn-secondary" id="timerStop" disabled>Stop &amp; save</button>
-  </div>
-  <div class="timer-note">When the timer ends (or you press Stop &amp; save), that time is added to today's hours automatically.</div>
-</div>
-
-<div class="hero">
-  <div class="hero-top">
-    <div class="streak-block">
-      <span class="streak-flame" id="streakFlame">🔥</span>
-      <span class="streak-num" id="streakNum">0</span>
-      <span class="streak-lbl">day streak</span>
-    </div>
-    <div class="mini-stats">
-      <span>Accounting: <b id="totalAcc">0h</b></span>
-      <span>freeCodeCamp: <b id="totalFcc">0h</b></span>
+  <div class="brand">
+    <h1>Study <em>Ledger</em></h1>
+    <div class="hairline"></div>
+    <div class="kicker"><span class="acc-mark">●</span> <b>Accounting</b> — 4h/day&nbsp;&nbsp;·&nbsp;&nbsp;<span class="fcc-mark">●</span> <b>freeCodeCamp</b> — 2h/day</div>
+    <div class="focus-line">
+      <span>Currently studying —</span>
+      <input type="text" id="fccName" placeholder="e.g. JavaScript Algorithms and Data Structures">
     </div>
   </div>
 
-  <div class="week-block">
-    <div class="week-labels">
-      <span>Last 7 days</span>
-      <span id="weekLabel">0h / 0h</span>
+  <div class="hero">
+    <div class="hero-cell">
+      <div class="k">Streak</div>
+      <div class="v" id="streakNum">0</div>
     </div>
-    <div class="week-bar-track"><div class="week-bar-fill" id="weekBarFill"></div></div>
+    <div class="hero-cell">
+      <div class="k">This week</div>
+      <div class="v" id="weekVal">0<small>h</small></div>
+    </div>
+  </div>
+  <div class="week-bar-track"><div class="week-bar-fill" id="weekBar"></div></div>
+  <div class="week-caption"><span id="weekSub">0h logged of 0h target</span><span id="weekPct">0%</span></div>
+
+  <div class="motivation" id="motivationLine">Small daily deposits build a big balance.</div>
+
+  <div class="timer-panel">
+    <div class="k">Session Timer</div>
+    <div class="timer-row">
+      <div class="timer-left">
+        <select id="timerSubject">
+          <option value="acc">Accounting</option>
+          <option value="fcc">freeCodeCamp</option>
+        </select>
+        <input type="number" id="timerMinutes" min="0.25" max="12" step="0.25" value="1"> hr
+      </div>
+      <div class="timer-display" id="timerDisplay">1:00:00</div>
+      <div class="timer-controls">
+        <button class="btn-gold" id="timerStart">Start</button>
+        <button class="btn-outline" id="timerPause" disabled>Pause</button>
+        <button class="btn-outline" id="timerStop" disabled>Stop &amp; Save</button>
+      </div>
+    </div>
+    <div class="timer-hint">Ends automatically into today's hours — or press Stop &amp; Save to bank it early.</div>
   </div>
 
-  <div class="vibe-line" id="vibeLine">Let's get started.</div>
-  <div class="motivation-line" id="motivationLine"></div>
+  <div class="ledger-head">
+    <span>Date</span><span class="acc-h">Accounting</span><span class="fcc-h">freeCodeCamp</span><span></span>
+  </div>
+  <div id="ledger"></div>
+
+  <footer>
+    <span>Saves automatically in this browser.</span>
+    <button id="resetBtn" type="button">Clear all entries</button>
+  </footer>
+
 </div>
-
-<main id="ledger"></main>
-
-<footer>
-  <span>Saves automatically in this browser.</span>
-  <button id="resetBtn" type="button">Clear all entries</button>
-</footer>
 
 <script>
 (function(){
   "use strict";
 
-  var START = new Date(2026, 8, 19);   // 19 Sep 2026 — today
-  var END   = new Date(2026, 9, 31);   // 31 Oct 2026 — end of following month
+  var START = new Date(2026, 8, 19);
+  var END   = new Date(2026, 9, 31);
   var ACC_TARGET = 4, FCC_TARGET = 2;
-  var STORE_KEY = "study-tracker-simple-v1";
+  var STORE_KEY = "study-ledger-luxury-v1";
   var DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   var MON = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
-  function loadState(){
-    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
-    catch(e){ return {}; }
-  }
-  function saveState(s){
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
-    catch(e){ /* storage unavailable */ }
-  }
+  var MOTIVATIONS = [
+    "Small daily deposits build a big balance — same in the ledger as in life.",
+    "You don't need a perfect day. You need today logged.",
+    "Every hour you put in now is an hour future-you doesn't have to cram.",
+    "Consistency compounds. Show up again today.",
+    "Nobody sees the hours behind the certificate — but you will feel them.",
+    "The streak isn't the point. What it's building is.",
+    "Progress you can't see yet is still progress.",
+    "Future you is counting on today you.",
+    "One more line in the ledger, one step closer.",
+    "You're exactly where today's work puts you."
+  ];
 
+  function loadState(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }catch(e){ return {}; } }
+  function saveState(s){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(s)); }catch(e){} }
   var state = loadState();
   if(!state._meta) state._meta = { fccName:"" };
 
   function dayKey(d){ return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
   function round2(n){ return Math.round(n*100)/100; }
   function entry(key){
-    if(!state[key]) state[key] = { acc:0, fcc:0, accNote:"", fccNote:"" };
+    if(!state[key]) state[key] = { acc:0, fcc:0, note:"" };
     return state[key];
   }
   function fccLabel(){
-    var n = state._meta.fccName.trim();
+    var n = (state._meta.fccName||"").trim();
     return n ? n : "freeCodeCamp";
   }
+  function dayOfYear(d){ var s=new Date(d.getFullYear(),0,0); return Math.floor((d-s)/86400000); }
 
   function tipFor(text){
     var t = text.toLowerCase();
     var rules = [
-      { k:["sleep","tired","exhaust"], msg:"Move this session earlier in the day, and split tomorrow's hours into two shorter sittings." },
-      { k:["sick","ill","fever","unwell"], msg:"Rest today. Spread the missing hours across the next two days instead of one." },
-      { k:["assignment","exam","test","deadline","due"], msg:"Block tomorrow's calendar for this subject first, before anything else." },
+      { k:["sleep","tired","exhaust"], msg:"Move the session earlier in the day and split tomorrow's hours into two shorter sittings." },
+      { k:["sick","ill","fever","unwell"], msg:"Rest today. Spread the missing hours over the next two days instead of one." },
+      { k:["assignment","exam","test","deadline","due"], msg:"Block tomorrow's calendar for this first, before anything else." },
       { k:["work","job","shift","overtime"], msg:"Set a fixed early-morning or late-evening slot that work doesn't touch." },
-      { k:["wifi","data","internet","load","electric"], msg:"Download material in advance so connectivity doesn't block the session again." },
+      { k:["wifi","data","internet","load","electric"], msg:"Download material in advance so connectivity doesn't block it again." },
       { k:["lazy","unmotivated","procrastin","forgot"], msg:"Use the timer above for just 10 minutes to start — most sessions continue once begun." },
-      { k:["transport","travel","commute","taxi"], msg:"Keep a short offline task ready for travel time to cover part of the hours." },
+      { k:["transport","travel","commute","taxi"], msg:"Keep a short offline task ready for travel time." },
       { k:["family","event","emergency"], msg:"Fair one-off — add the missing hours onto this weekend." }
     ];
-    for(var i=0;i<rules.length;i++){
-      for(var j=0;j<rules[i].k.length;j++){
+    for(var i=0;i<rules.length;i++)
+      for(var j=0;j<rules[i].k.length;j++)
         if(t.indexOf(rules[i].k[j]) !== -1) return rules[i].msg;
-      }
-    }
     return "Add the missing hours onto tomorrow's session so the week still balances.";
-  }
-
-  var MOTIVATIONS = [
-    "Small daily deposits build a big balance — same in the ledger as in life.",
-    "You don't need a perfect day. You need today logged.",
-    "Every hour you put in now is an hour future-you doesn't have to cram.",
-    "Consistency beats intensity. Show up again today.",
-    "Nobody sees the hours behind the certificate — but you will feel them.",
-    "The streak isn't the point. What it's building is.",
-    "Progress you can't see yet is still progress.",
-    "Future you is counting on today you.",
-    "One more line in the ledger, one step closer.",
-    "You're not behind. You're exactly where today's work puts you."
-  ];
-  function dayOfYear(d){
-    var start = new Date(d.getFullYear(),0,0);
-    return Math.floor((d - start) / 86400000);
   }
 
   function computeStreak(){
     var today = new Date(); today.setHours(0,0,0,0);
     var boundEnd = today < END ? today : END;
-    var d = new Date(START);
-    var cur = 0;
+    var d = new Date(START), cur = 0;
     while(d <= boundEnd){
       var day = state[dayKey(d)];
       if(day && (day.acc||0) >= ACC_TARGET && (day.fcc||0) >= FCC_TARGET) cur++;
@@ -345,121 +310,53 @@
     }
     return cur;
   }
-
   function weeklyStats(){
     var today = new Date(); today.setHours(0,0,0,0);
-    var windowStart = new Date(today); windowStart.setDate(today.getDate()-6);
-    if(windowStart < START) windowStart = new Date(START);
-    var daysCounted = Math.round((today - windowStart)/86400000) + 1;
-    var target = daysCounted * (ACC_TARGET + FCC_TARGET);
-    var actual = 0;
-    var d = new Date(windowStart);
+    var wStart = new Date(today); wStart.setDate(today.getDate()-6);
+    if(wStart < START) wStart = new Date(START);
+    var days = Math.round((today - wStart)/86400000) + 1;
+    var target = days * (ACC_TARGET+FCC_TARGET);
+    var actual = 0, d = new Date(wStart);
     while(d <= today){
       var day = state[dayKey(d)];
-      if(day) actual += (day.acc||0) + (day.fcc||0);
+      if(day) actual += (day.acc||0)+(day.fcc||0);
       d.setDate(d.getDate()+1);
     }
     return { actual: round2(actual), target: target };
   }
 
-  function statusClass(hours, target){
+  function cellClass(hours, target){
     if(hours >= target) return "met";
     if(hours > 0) return "partial";
     return "";
   }
 
-  function buildSubjectRow(kind, key, e, name, target){
-    var row = document.createElement("div");
-    row.className = "subject-row";
-
-    var hours = kind === "acc" ? (e.acc||0) : (e.fcc||0);
-
-    var left = document.createElement("div");
-    left.className = "subject-left";
-    var dot = document.createElement("div");
-    dot.className = "status-dot " + statusClass(hours, target);
-    var nameWrap = document.createElement("div");
-    var nameEl = document.createElement("div");
-    nameEl.className = "subject-name";
-    nameEl.textContent = name;
-    var targetEl = document.createElement("div");
-    targetEl.className = "subject-target";
-    targetEl.textContent = "target " + target + "h";
-    nameWrap.appendChild(nameEl);
-    nameWrap.appendChild(targetEl);
-    left.appendChild(dot);
-    left.appendChild(nameWrap);
-
-    var right = document.createElement("div");
-    right.className = "subject-right";
+  function buildHourCell(key, e, kind, target){
+    var cell = document.createElement("div");
+    var hours = kind==="acc" ? (e.acc||0) : (e.fcc||0);
+    cell.className = "hour-cell " + kind + " " + cellClass(hours, target);
     var input = document.createElement("input");
-    input.type = "number";
-    input.min = "0"; input.max = "24"; input.step = "0.25";
+    input.type = "number"; input.min="0"; input.max="24"; input.step="0.25";
     input.value = hours || "";
     input.placeholder = "0";
-    var hlabel = document.createElement("span");
-    hlabel.className = "hlabel";
-    hlabel.textContent = "h";
-    right.appendChild(input);
-    right.appendChild(hlabel);
+    var u = document.createElement("span");
+    u.className = "u"; u.textContent = "h";
+    cell.appendChild(input); cell.appendChild(u);
 
-    row.appendChild(left);
-    row.appendChild(right);
-
-    var wrapper = document.createElement("div");
-    wrapper.appendChild(row);
-
-    var noteKey = kind === "acc" ? "accNote" : "fccNote";
-    var toggle = document.createElement("button");
-    toggle.type = "button";
-    toggle.className = "reason-toggle";
-    toggle.textContent = e[noteKey] ? "edit reason" : "short on hours? add a reason";
-    wrapper.appendChild(toggle);
-
-    var box = document.createElement("div");
-    box.className = "reason-box" + (e[noteKey] ? " open" : "");
-    var ta = document.createElement("textarea");
-    ta.placeholder = "Why didn't this hit the target?";
-    ta.value = e[noteKey] || "";
-    var tip = document.createElement("div");
-    tip.className = "reason-tip" + (e[noteKey] ? " show" : "");
-    if(e[noteKey]) tip.innerHTML = "<b>Fix: </b>" + tipFor(e[noteKey]);
-    box.appendChild(ta);
-    box.appendChild(tip);
-    wrapper.appendChild(box);
-
-    toggle.addEventListener("click", function(){ box.classList.toggle("open"); });
-    ta.addEventListener("input", function(){
-      e[noteKey] = ta.value;
-      if(ta.value.trim()){
-        tip.innerHTML = "<b>Fix: </b>" + tipFor(ta.value);
-        tip.classList.add("show");
-      } else { tip.classList.remove("show"); }
-      saveState(state);
-    });
     input.addEventListener("change", function(){
       var v = parseFloat(input.value);
-      if(isNaN(v) || v < 0) v = 0;
-      if(kind === "acc") e.acc = round2(v); else e.fcc = round2(v);
+      if(isNaN(v)||v<0) v = 0;
+      if(kind==="acc") e.acc = round2(v); else e.fcc = round2(v);
       saveState(state);
       refreshAll();
-      if((e.acc||0) >= ACC_TARGET && (e.fcc||0) >= FCC_TARGET){
-        var cardEl = document.querySelector('[data-daykey="'+key+'"]');
-        if(cardEl){
-          cardEl.classList.add("celebrate");
-          setTimeout(function(){ cardEl.classList.remove("celebrate"); }, 1200);
-        }
-      }
     });
-
-    return wrapper;
+    return cell;
   }
 
   function renderLedger(){
     var ledger = document.getElementById("ledger");
     ledger.innerHTML = "";
-    var cur = new Date(START);
-    var lastMonth = null;
+    var cur = new Date(START), lastMonth = null;
     var todayKey = dayKey(new Date());
 
     while(cur <= END){
@@ -474,96 +371,89 @@
       }
 
       var e = entry(key);
-      var card = document.createElement("div");
-      card.className = "day-card" + (key === todayKey ? " today" : "");
-      card.setAttribute("data-daykey", key);
+      var row = document.createElement("div");
+      row.className = "day-row" + (key===todayKey ? " today" : "");
 
-      var titleRow = document.createElement("div");
-      titleRow.className = "day-title";
-      titleRow.innerHTML = "<span>" + DOW[cur.getDay()] + ", " + MON[cur.getMonth()] + " " + cur.getDate() + "</span>";
-      if(key === todayKey){
-        var tag = document.createElement("span");
-        tag.className = "today-tag";
-        tag.textContent = "TODAY";
-        titleRow.appendChild(tag);
-      }
-      card.appendChild(titleRow);
+      var dateCell = document.createElement("div");
+      dateCell.className = "date-cell";
+      dateCell.textContent = DOW[cur.getDay()] + " " + cur.getDate();
+      row.appendChild(dateCell);
 
-      card.appendChild(buildSubjectRow("acc", key, e, "Accounting", ACC_TARGET));
-      card.appendChild(buildSubjectRow("fcc", key, e, fccLabel(), FCC_TARGET));
+      row.appendChild(buildHourCell(key, e, "acc", ACC_TARGET));
+      row.appendChild(buildHourCell(key, e, "fcc", FCC_TARGET));
 
-      ledger.appendChild(card);
+      var short = (e.acc||0) < ACC_TARGET || (e.fcc||0) < FCC_TARGET;
+      var noteBtn = document.createElement("button");
+      noteBtn.type = "button";
+      noteBtn.className = "note-btn" + (e.note ? " active" : "");
+      noteBtn.textContent = short ? "note" : "";
+      row.appendChild(noteBtn);
+
+      ledger.appendChild(row);
+
+      var noteRow = document.createElement("div");
+      noteRow.className = "note-panel" + (e.note ? " open" : "");
+      var ta = document.createElement("textarea");
+      ta.placeholder = "Why short today?";
+      ta.value = e.note || "";
+      var fix = document.createElement("div");
+      fix.className = "fix" + (e.note ? " show" : "");
+      if(e.note) fix.innerHTML = "<b>Fix — </b>" + tipFor(e.note);
+      noteRow.appendChild(ta);
+      noteRow.appendChild(fix);
+      ledger.appendChild(noteRow);
+
+      noteBtn.addEventListener("click", (function(nr){ return function(){ nr.classList.toggle("open"); }; })(noteRow));
+      ta.addEventListener("input", (function(nb, fx, ekey){
+        return function(){
+          entry(ekey).note = ta.value;
+          saveState(state);
+          if(ta.value.trim()){ fx.innerHTML = "<b>Fix — </b>" + tipFor(ta.value); fx.classList.add("show"); nb.classList.add("active"); }
+          else { fx.classList.remove("show"); nb.classList.remove("active"); }
+        };
+      })(noteBtn, fix, key));
+
       cur.setDate(cur.getDate()+1);
     }
   }
 
-  function renderStats(){
-    var accH = 0, fccH = 0;
-    for(var k in state){
-      if(k === "_meta") continue;
-      accH += state[k].acc||0;
-      fccH += state[k].fcc||0;
-    }
-    document.getElementById("totalAcc").textContent = round2(accH) + "h";
-    document.getElementById("totalFcc").textContent = round2(fccH) + "h";
+  function renderStatus(){
     var streak = computeStreak();
     document.getElementById("streakNum").textContent = streak;
-    document.getElementById("streakFlame").style.opacity = streak > 0 ? "1" : ".3";
 
     var wk = weeklyStats();
-    document.getElementById("weekLabel").textContent = wk.actual + "h / " + wk.target + "h";
-    var pct = wk.target ? Math.min(100, (wk.actual/wk.target)*100) : 0;
-    document.getElementById("weekBarFill").style.width = pct + "%";
+    document.getElementById("weekVal").innerHTML = wk.actual + "<small>h</small>";
+    var pct = wk.target ? Math.min(100,(wk.actual/wk.target)*100) : 0;
+    document.getElementById("weekBar").style.width = pct + "%";
+    document.getElementById("weekSub").textContent = wk.actual + "h logged of " + wk.target + "h target";
+    document.getElementById("weekPct").textContent = Math.round(pct) + "%";
 
-    var todayKey = dayKey(new Date());
-    var todayEntry = state[todayKey] || {acc:0, fcc:0};
-    var todayCombo = (todayEntry.acc||0) + (todayEntry.fcc||0);
-    var vibe;
-    if(todayCombo >= ACC_TARGET + FCC_TARGET){
-      vibe = "✅ Today's fully logged. That's the whole job done — nice.";
-    } else if(todayCombo > 0){
-      vibe = "You're partway through today — " + round2((ACC_TARGET+FCC_TARGET)-todayCombo) + "h left to close it out.";
-    } else if(streak > 0){
-      vibe = "🔥 " + streak + "-day streak going — don't let today be the one that breaks it.";
-    } else {
-      vibe = "Nothing logged yet today. Start the timer for 10 minutes — that's enough to begin.";
-    }
-    document.getElementById("vibeLine").textContent = vibe;
     document.getElementById("motivationLine").textContent = MOTIVATIONS[dayOfYear(new Date()) % MOTIVATIONS.length];
   }
 
-  function refreshAll(){
-    renderLedger();
-    renderStats();
-  }
+  function refreshAll(){ renderLedger(); renderStatus(); }
 
-  // ---- fcc name field ----
+  // ---- freeCodeCamp label ----
   var fccInput = document.getElementById("fccName");
   fccInput.value = state._meta.fccName || "";
   fccInput.addEventListener("input", function(){
     state._meta.fccName = fccInput.value;
     saveState(state);
-    renderLedger();
   });
 
   // ---- timer ----
   var timer = { running:false, remainingSec:0, totalSec:0, intervalId:null };
-
   function fmtTime(sec){
-    var m = Math.floor(sec/60), s = sec%60;
-    return (m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+    sec = Math.max(0, sec);
+    var h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+    return h + ":" + (m<10?"0":"")+m + ":" + (s<10?"0":"")+s;
   }
   function beep(){
     try{
-      var Ctx = window.AudioContext || window.webkitAudioContext;
-      var ctx = new Ctx();
-      var o = ctx.createOscillator();
-      var g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.frequency.value = 880;
-      g.gain.value = 0.16;
-      o.start();
-      setTimeout(function(){ o.stop(); ctx.close(); }, 450);
+      var Ctx = window.AudioContext||window.webkitAudioContext;
+      var ctx = new Ctx(); var o=ctx.createOscillator(); var g=ctx.createGain();
+      o.connect(g); g.connect(ctx.destination); o.frequency.value=880; g.gain.value=0.16;
+      o.start(); setTimeout(function(){o.stop();ctx.close();},450);
     }catch(e){}
     if(navigator.vibrate) navigator.vibrate([200,80,200]);
   }
@@ -571,78 +461,66 @@
     var key = dayKey(new Date());
     var e = entry(key);
     var hrs = minutes/60;
-    if(subject === "acc") e.acc = round2((e.acc||0)+hrs);
-    else e.fcc = round2((e.fcc||0)+hrs);
-    saveState(state);
-    refreshAll();
+    if(subject==="acc") e.acc = round2((e.acc||0)+hrs); else e.fcc = round2((e.fcc||0)+hrs);
+    saveState(state); refreshAll();
   }
   function resetTimerUI(){
     if(timer.intervalId) clearInterval(timer.intervalId);
-    timer.running = false;
-    timer.remainingSec = 0; timer.totalSec = 0;
-    document.getElementById("timerStart").disabled = false;
-    document.getElementById("timerPause").disabled = true;
-    document.getElementById("timerStop").disabled = true;
-    document.getElementById("timerSubject").disabled = false;
-    document.getElementById("timerMinutes").disabled = false;
-    var mins = parseFloat(document.getElementById("timerMinutes").value) || 25;
-    document.getElementById("timerDisplay").textContent = fmtTime(Math.round(mins*60));
-    document.title = "Study Tracker — Accounting & freeCodeCamp";
-  }
-  function updateTimerDisplay(){
-    document.getElementById("timerDisplay").textContent = fmtTime(Math.max(0,timer.remainingSec));
-    var subj = document.getElementById("timerSubject").value;
-    var label = subj === "acc" ? "Accounting" : fccLabel();
-    document.title = fmtTime(Math.max(0,timer.remainingSec)) + " · " + label;
+    timer.running=false; timer.remainingSec=0; timer.totalSec=0;
+    document.getElementById("timerStart").disabled=false;
+    document.getElementById("timerPause").disabled=true;
+    document.getElementById("timerStop").disabled=true;
+    document.getElementById("timerSubject").disabled=false;
+    document.getElementById("timerMinutes").disabled=false;
+    var hrs = parseFloat(document.getElementById("timerMinutes").value)||1;
+    document.getElementById("timerDisplay").textContent = fmtTime(Math.round(hrs*3600));
+    document.title = "Study Ledger";
   }
   document.getElementById("timerStart").addEventListener("click", function(){
     if(timer.running) return;
-    if(timer.remainingSec <= 0){
-      var mins = parseFloat(document.getElementById("timerMinutes").value) || 25;
-      timer.totalSec = Math.round(mins*60);
-      timer.remainingSec = timer.totalSec;
+    if(timer.remainingSec<=0){
+      var hrs = parseFloat(document.getElementById("timerMinutes").value)||1;
+      timer.totalSec = Math.round(hrs*3600); timer.remainingSec = timer.totalSec;
     }
-    timer.running = true;
-    document.getElementById("timerStart").disabled = true;
-    document.getElementById("timerPause").disabled = false;
-    document.getElementById("timerStop").disabled = false;
-    document.getElementById("timerSubject").disabled = true;
-    document.getElementById("timerMinutes").disabled = true;
+    timer.running=true;
+    document.getElementById("timerStart").disabled=true;
+    document.getElementById("timerPause").disabled=false;
+    document.getElementById("timerStop").disabled=false;
+    document.getElementById("timerSubject").disabled=true;
+    document.getElementById("timerMinutes").disabled=true;
     timer.intervalId = setInterval(function(){
       timer.remainingSec--;
-      updateTimerDisplay();
-      if(timer.remainingSec <= 0){
-        clearInterval(timer.intervalId);
-        timer.running = false;
+      document.getElementById("timerDisplay").textContent = fmtTime(Math.max(0,timer.remainingSec));
+      var subj = document.getElementById("timerSubject").value;
+      var label = subj==="acc" ? "Accounting" : fccLabel();
+      document.title = fmtTime(Math.max(0,timer.remainingSec)) + " · " + label;
+      if(timer.remainingSec<=0){
+        clearInterval(timer.intervalId); timer.running=false;
         beep();
-        logSession(document.getElementById("timerSubject").value, Math.round(timer.totalSec/60));
+        logSession(subj, Math.round(timer.totalSec/60));
         resetTimerUI();
       }
-    }, 1000);
+    },1000);
   });
   document.getElementById("timerPause").addEventListener("click", function(){
     if(!timer.running) return;
-    clearInterval(timer.intervalId);
-    timer.running = false;
-    document.getElementById("timerStart").disabled = false;
-    document.getElementById("timerPause").disabled = true;
-    document.title = "Study Tracker — paused";
+    clearInterval(timer.intervalId); timer.running=false;
+    document.getElementById("timerStart").disabled=false;
+    document.getElementById("timerPause").disabled=true;
   });
   document.getElementById("timerStop").addEventListener("click", function(){
     if(timer.intervalId) clearInterval(timer.intervalId);
     var elapsedSec = timer.totalSec - timer.remainingSec;
     var mins = Math.round(elapsedSec/60);
-    timer.running = false;
-    if(mins >= 1) logSession(document.getElementById("timerSubject").value, mins);
+    timer.running=false;
+    if(mins>=1) logSession(document.getElementById("timerSubject").value, mins);
     resetTimerUI();
   });
 
-  // ---- reset ----
   document.getElementById("resetBtn").addEventListener("click", function(){
     if(confirm("Clear every logged hour and note? This can't be undone.")){
       var meta = state._meta;
-      state = {};
-      state._meta = meta;
+      state = { _meta: meta };
       saveState(state);
       refreshAll();
     }
